@@ -1,6 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using EasyBook.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Database context
+builder.Services.AddDbContext<EasyBookContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("EasyBookContext")));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

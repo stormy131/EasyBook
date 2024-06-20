@@ -210,4 +210,4 @@ project.lock.json
 
 # UWP Projects
 AppPackages/
-*.db
+*.db*
