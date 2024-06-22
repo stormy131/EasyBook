@@ -8,4 +8,5 @@ public class EasyBookContext : DbContext{
     {}
 
     public DbSet<BookItem> BookItems { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
 }
