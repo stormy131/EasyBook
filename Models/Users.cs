@@ -8,6 +8,14 @@ public class UserDTO {
     public long Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
+
+    public static implicit operator UserDTO(User u){
+        return new UserDTO{
+            Id = u.Id,
+            FirstName = u.FirstName,
+            LastName = u.LastName
+        };
+    }
 }
 
 public class User{
@@ -28,12 +36,4 @@ public class User{
     [Required]
     [EmailAddress]
     public string Email { get; set; }
-
-    public static implicit operator UserDTO(User u){
-        return new UserDTO{
-            Id = u.Id,
-            FirstName = u.FirstName,
-            LastName = u.LastName
-        };
-    }
 }

@@ -14,14 +14,14 @@ namespace EasyBook.Controllers {
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookItem>>> GetAllBooks(){
-            return await _db.BookItems.ToListAsync();
+        public IQueryable<BookItemDTO> GetAllBooks(){
+            return _db.BookItems.Select(b => (BookItemDTO)b);
         }
 
         [HttpGet("{book_id}")]
         [IdFilterAsync]
-        public async Task<ActionResult<BookItem>> GetBook(long book_id){
-            var book = await _db.BookItems.FindAsync(book_id);
+        public ActionResult<BookItem> GetBook(long book_id){
+            var book = _db.BookItems.Include("Reviews").First(b => b.Id == book_id);
 
             if (book is null){
                 return NotFound();
@@ -31,7 +31,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddBook(BookItem book_data){
+        public async Task<ActionResult> AddBook(BookItemDTO book_data){
             _db.BookItems.Add(book_data);
             await _db.SaveChangesAsync();
 
@@ -40,7 +40,7 @@ namespace EasyBook.Controllers {
 
         [IdFilterAsync]
         [HttpPut("{book_id}")]
-        public async Task<ActionResult<BookItem>> PutBook(long book_id, BookItem new_data){
+        public async Task<ActionResult<BookItem>> PutBook(long book_id, BookItemDTO new_data){
             if(book_id != new_data.Id){
                 return BadRequest();
             }
@@ -70,6 +70,27 @@ namespace EasyBook.Controllers {
             _db.BookItems.Remove(book_item);
             await _db.SaveChangesAsync();
 
+            return NoContent();
+        }
+
+        [HttpPost("Review/{book_id}")]
+        public async Task<ActionResult> PostReview(long book_id, ReviewDTO review_data){
+            if(review_data.BookItemId != book_id){
+                return BadRequest("Target book item IDs do not correspond to each other");
+            }
+
+            _db.Reviews.Add(review_data);
+            await _db.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(PostReview), review_data);           
+        }
+
+        [HttpDelete("Review/{review_id}")]
+        public async Task<ActionResult> DeleteReview(long review_id){
+            var review_item = (await _db.Reviews.FindAsync(review_id))!;
+            _db.Remove(review_item);
+            
+            await _db.SaveChangesAsync();
             return NoContent();
         }
 

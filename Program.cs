@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using EasyBook.Models;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<EasyBookContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("EasyBookContext")));
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers().AddJsonOptions(opts =>
+    opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+    builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
