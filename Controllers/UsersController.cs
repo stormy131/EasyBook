@@ -1,5 +1,6 @@
 using EasyBook.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using EasyBook.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,7 @@ namespace EasyBook.Controllers{
         }
 
         [HttpGet("{user_id}")]
+        [IdFilterAsync<User>]
         [Produces(typeof(UserDTO))]
         public async Task<ActionResult<UserDTO>> GetUser(long user_id){
             return (UserDTO)(await _db.Users.FindAsync(user_id))!;
@@ -38,6 +40,7 @@ namespace EasyBook.Controllers{
         }
 
         [HttpDelete("{user_id}")]
+        [IdFilterAsync<User>]
         public async Task<ActionResult> DeleteUser(long user_id){
             var user = await _db.Users.FindAsync(user_id);
 
@@ -52,6 +55,7 @@ namespace EasyBook.Controllers{
         }
 
         [HttpPut("{user_id}")]
+        [IdFilterAsync<User>]
         public async Task<ActionResult<UserDTO>> PutUser(long user_id, User new_data){
             if(new_data.Id != user_id){
                 return BadRequest();

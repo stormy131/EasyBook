@@ -2,6 +2,7 @@ using EasyBook.Models;
 using EasyBook.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace EasyBook.Controllers {
     [Route("api/[controller]")]
@@ -19,7 +20,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpGet("{book_id}")]
-        [IdFilterAsync]
+        [IdFilterAsync<BookItem>]
         public ActionResult<BookItem> GetBook(long book_id){
             var book = _db.BookItems.Include("Reviews").First(b => b.Id == book_id);
 
@@ -38,7 +39,7 @@ namespace EasyBook.Controllers {
             return CreatedAtAction(nameof(AddBook), book_data);
         }
 
-        [IdFilterAsync]
+        [IdFilterAsync<BookItem>]
         [HttpPut("{book_id}")]
         public async Task<ActionResult<BookItem>> PutBook(long book_id, BookItemDTO new_data){
             if(book_id != new_data.Id){
@@ -59,7 +60,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpDelete("{book_id}")]
-        [IdFilterAsync]
+        [IdFilterAsync<BookItem>]
         public async Task<ActionResult> DeleteBook(long book_id){
             var book_item = await _db.BookItems.FindAsync(book_id);
 
@@ -86,6 +87,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpDelete("Review/{review_id}")]
+        [IdFilterAsync<ReviewItem>]
         public async Task<ActionResult> DeleteReview(long review_id){
             var review_item = (await _db.Reviews.FindAsync(review_id))!;
             _db.Remove(review_item);

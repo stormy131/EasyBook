@@ -52,5 +52,7 @@ public class BookItem {
     public required int Price { get; set; }
     public string? Genre { get; set; }
 
-    public virtual ICollection<ReviewItem> Reviews { get; set; }    
+    public virtual ICollection<ReviewItem> Reviews { get; set; }
+
+    // public virtual ICollection<OrderItem> Orders { get; set; }  
 }
