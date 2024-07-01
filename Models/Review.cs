@@ -42,9 +42,11 @@ public class ReviewItem{
     public string? Text { get; set; }
 
     public long UserId { get; set; }
+    [Required]
     public virtual User User { get; set; }
 
     public long BookItemId { get; set; }
+    [Required]
     public virtual BookItem BookItem { get; set; }
 
     [Range(1, 5)]

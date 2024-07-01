@@ -2,6 +2,8 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace EasyBook.Migrations
 {
     /// <inheritdoc />
@@ -112,8 +114,32 @@ namespace EasyBook.Migrations
                         name: "FK_OrderItem_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "BookItems",
+                columns: new[] { "Id", "Author", "Genre", "Name", "Price" },
+                values: new object[,]
+                {
+                    { 1L, "1", "Horror", "1", 10 },
+                    { 2L, "2", "Detective", "2", 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "FirstName", "LastName", "Password" },
+                values: new object[,]
+                {
+                    { 1L, "123@gmail.com", "A", "A", "123" },
+                    { 2L, "qwe@gmail.com", "B", "B", "qwe" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Reviews",
+                columns: new[] { "Id", "BookItemId", "Rating", "Text", "UserId" },
+                values: new object[] { 1L, 1L, 3, "Awesome book", 1L });
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItem_ItemId",

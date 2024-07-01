@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyBook.Migrations
 {
     [DbContext(typeof(EasyBookContext))]
-    [Migration("20240701134557_Init")]
+    [Migration("20240701175941_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -45,6 +45,24 @@ namespace EasyBook.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BookItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Author = "1",
+                            Genre = "Horror",
+                            Name = "1",
+                            Price = 10
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Author = "2",
+                            Genre = "Detective",
+                            Name = "2",
+                            Price = 3
+                        });
                 });
 
             modelBuilder.Entity("EasyBook.Models.Order", b =>
@@ -113,6 +131,16 @@ namespace EasyBook.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            BookItemId = 1L,
+                            Rating = 3,
+                            Text = "Awesome book",
+                            UserId = 1L
+                        });
                 });
 
             modelBuilder.Entity("EasyBook.Models.User", b =>
@@ -142,6 +170,24 @@ namespace EasyBook.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            Email = "123@gmail.com",
+                            FirstName = "A",
+                            LastName = "A",
+                            Password = "123"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Email = "qwe@gmail.com",
+                            FirstName = "B",
+                            LastName = "B",
+                            Password = "qwe"
+                        });
                 });
 
             modelBuilder.Entity("EasyBook.Models.Order", b =>
@@ -165,7 +211,8 @@ namespace EasyBook.Migrations
 
                     b.HasOne("EasyBook.Models.Order", null)
                         .WithMany("OrderedItems")
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Item");
                 });

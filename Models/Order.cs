@@ -28,14 +28,17 @@ public class OrderDTO{
 public class Order{
     public long Id { get; set; }
     public long UserId { get; set; }
+    [Required]
     public User User { get; set; }
 
+    [Required]
     public IEnumerable<OrderItem> OrderedItems { get; set; }
 }
 
 public class OrderItemDTO{
     public long Id { get; set; }
     public long ItemId { get; set; }
+    // public long OrderId { get; set; }
 
     [Range(1, 200)]
     public int Quantity { get; set; }
@@ -44,7 +47,8 @@ public class OrderItemDTO{
         return new OrderItemDTO{
             Id = order_item.Id,
             ItemId = order_item.ItemId,
-            Quantity = order_item.Quantity
+            Quantity = order_item.Quantity,
+            // OrderId = order_item.OrderId
         };
     }
 
@@ -52,7 +56,8 @@ public class OrderItemDTO{
         return new OrderItem{
             Id = order_item_dto.Id,
             ItemId = order_item_dto.ItemId,
-            Quantity = order_item_dto.Quantity
+            Quantity = order_item_dto.Quantity,
+            // OrderId = order_item_dto.OrderId
         };
     }
 }
@@ -61,7 +66,12 @@ public class OrderItem {
     public long Id { get; set; }
 
     public long ItemId { get; set; }
+    [Required]
     public BookItem Item { get; set; }
+
+    // public long OrderId { get; set; }
+    // [Required]
+    // public Order Order { get; set; }
 
     [Range(1, 200)]
     public int Quantity { get; set; }

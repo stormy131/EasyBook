@@ -28,7 +28,6 @@ namespace EasyBook.Controllers{
         }
 
         [HttpDelete("{user_id}/{order_id}")]
-        // [IdFilterAsync<User>]
         public async Task<ActionResult> DeleteOrder(long user_id, long order_id){
             var order = await _db.Orders.FindAsync(order_id);
 
