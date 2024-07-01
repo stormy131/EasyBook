@@ -10,5 +10,5 @@ public class EasyBookContext : DbContext{
     public DbSet<BookItem> BookItems { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<ReviewItem> Reviews { get; set; } = null!;
-    // public DbSet<OrderItem> Orders { get; set; } = null!;
+    public DbSet<Order> Orders { get; set; } = null!;
 }
