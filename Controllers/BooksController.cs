@@ -2,7 +2,8 @@ using EasyBook.Models;
 using EasyBook.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Authorization;
+using EasyBook.Identity;
 
 namespace EasyBook.Controllers {
     [Route("api/[controller]")]
@@ -15,12 +16,14 @@ namespace EasyBook.Controllers {
         }
 
         [HttpGet]
+        [Authorize]
         public IQueryable<BookItemDTO> GetAllBooks(){
             return _db.BookItems.Select(b => (BookItemDTO)b);
         }
 
         [HttpGet("{book_id}")]
         [IdFilterAsync<BookItem>]
+        [Authorize]
         public ActionResult<BookItem> GetBook(long book_id){
             var book = _db.BookItems.Include("Reviews").First(b => b.Id == book_id);
 
@@ -32,6 +35,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpPost]
+        [Authorize(Policy = IdentityData.AdminUserPolicy)]
         public async Task<ActionResult> AddBook(BookItemDTO book_data){
             _db.BookItems.Add(book_data);
             await _db.SaveChangesAsync();
@@ -41,6 +45,7 @@ namespace EasyBook.Controllers {
 
         [IdFilterAsync<BookItem>]
         [HttpPut("{book_id}")]
+        [Authorize(Policy = IdentityData.AdminUserPolicy)]
         public async Task<ActionResult<BookItem>> PutBook(long book_id, BookItemDTO new_data){
             if(book_id != new_data.Id){
                 return BadRequest();
@@ -61,6 +66,7 @@ namespace EasyBook.Controllers {
 
         [HttpDelete("{book_id}")]
         [IdFilterAsync<BookItem>]
+        [Authorize(Policy = IdentityData.AdminUserPolicy)]
         public async Task<ActionResult> DeleteBook(long book_id){
             var book_item = await _db.BookItems.FindAsync(book_id);
 
@@ -75,6 +81,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpPost("Review/{book_id}")]
+        [Authorize]
         public async Task<ActionResult> PostReview(long book_id, ReviewDTO review_data){
             if(review_data.BookItemId != book_id){
                 return BadRequest("Target book item IDs do not correspond to each other");
@@ -88,6 +95,7 @@ namespace EasyBook.Controllers {
 
         [HttpDelete("Review/{review_id}")]
         [IdFilterAsync<ReviewItem>]
+        [Authorize]
         public async Task<ActionResult> DeleteReview(long review_id){
             var review_item = (await _db.Reviews.FindAsync(review_id))!;
             _db.Remove(review_item);

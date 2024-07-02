@@ -37,7 +37,8 @@ namespace EasyBook.Migrations
                     FirstName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Password = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false)
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    IsAdmin = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -129,11 +130,11 @@ namespace EasyBook.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Email", "FirstName", "LastName", "Password" },
+                columns: new[] { "Id", "Email", "FirstName", "IsAdmin", "LastName", "Password" },
                 values: new object[,]
                 {
-                    { 1L, "123@gmail.com", "A", "A", "123" },
-                    { 2L, "qwe@gmail.com", "B", "B", "qwe" }
+                    { 1L, "123@example.com", "A", true, "A", "123" },
+                    { 2L, "qwe@example.com", "B", false, "B", "qwe" }
                 });
 
             migrationBuilder.InsertData(

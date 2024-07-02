@@ -21,14 +21,16 @@ public class EasyBookContext : DbContext{
             LastName = "A",
             FirstName = "A",
             Password = "123",
-            Email = "123@gmail.com"
+            Email = "123@example.com",
+            IsAdmin=true
         } );
         modelBuilder.Entity<User>().HasData( new User{
             Id = 2,
             FirstName = "B",
             LastName = "B",
             Password = "qwe",
-            Email = "qwe@gmail.com"
+            Email = "qwe@example.com",
+            IsAdmin=false
         });
 
         modelBuilder.Entity<BookItem>().HasData(new BookItem{

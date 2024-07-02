@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyBook.Migrations
 {
     [DbContext(typeof(EasyBookContext))]
-    [Migration("20240701175941_Init")]
+    [Migration("20240702171448_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -158,6 +158,9 @@ namespace EasyBook.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -175,16 +178,18 @@ namespace EasyBook.Migrations
                         new
                         {
                             Id = 1L,
-                            Email = "123@gmail.com",
+                            Email = "123@example.com",
                             FirstName = "A",
+                            IsAdmin = true,
                             LastName = "A",
                             Password = "123"
                         },
                         new
                         {
                             Id = 2L,
-                            Email = "qwe@gmail.com",
+                            Email = "qwe@example.com",
                             FirstName = "B",
+                            IsAdmin = false,
                             LastName = "B",
                             Password = "qwe"
                         });
