@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using EasyBook.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

@@ -43,8 +43,8 @@ namespace EasyBook.Controllers {
             return CreatedAtAction(nameof(AddBook), book_data);
         }
 
-        [IdFilterAsync<BookItem>]
         [HttpPut("{book_id}")]
+        [IdFilterAsync<BookItem>]
         [Authorize(Policy = IdentityData.AdminUserPolicy)]
         public async Task<ActionResult<BookItem>> PutBook(long book_id, BookItemDTO new_data){
             if(book_id != new_data.Id){
@@ -81,6 +81,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpPost("Review/{book_id}")]
+        [IdFilterAsync<BookItem>]
         [Authorize]
         public async Task<ActionResult> PostReview(long book_id, ReviewDTO review_data){
             if(review_data.BookItemId != book_id){
@@ -94,7 +95,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpDelete("Review/{review_id}")]
-        [IdFilterAsync<ReviewItem>]
+        [IdFilterAsync<ReviewItem>, AuthorityFilterAsync<ReviewItem>]
         [Authorize]
         public async Task<ActionResult> DeleteReview(long review_id){
             var review_item = (await _db.Reviews.FindAsync(review_id))!;

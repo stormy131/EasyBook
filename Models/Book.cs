@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EasyBook.Models;
 
@@ -53,6 +52,4 @@ public class BookItem {
     public string? Genre { get; set; }
 
     public virtual ICollection<ReviewItem> Reviews { get; set; }
-
-    // public virtual ICollection<OrderItem> Orders { get; set; }  
 }

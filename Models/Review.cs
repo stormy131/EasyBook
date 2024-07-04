@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using EasyBook.Filters;
 
 namespace EasyBook.Models;
 
@@ -35,7 +36,7 @@ public class ReviewDTO{
     }
 }
 
-public class ReviewItem{
+public class ReviewItem : ICreatedByUser{
     public long Id { get; set; }
 
     [Required(AllowEmptyStrings=true)]

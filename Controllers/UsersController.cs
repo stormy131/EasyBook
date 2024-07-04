@@ -39,7 +39,6 @@ namespace EasyBook.Controllers{
         [HttpGet("{user_id}")]
         [IdFilterAsync<User>]
         [Authorize]
-        [Produces(typeof(UserDTO))]
         public async Task<ActionResult<UserDTO>> GetUser(long user_id){
             return (UserDTO)(await _db.Users.FindAsync(user_id))!;
         }
