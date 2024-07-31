@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EasyBook.Filters{
-    public class IdFilterAsync<TEntity> : Attribute, IAsyncActionFilter where TEntity : class {
+    public class ExistanceFilterAsync<TEntity> : Attribute, IAsyncActionFilter where TEntity : class {
         private readonly Dictionary<Type, string> route_paramter = new Dictionary<Type, string>{
             {typeof(User), "user_id"},
             {typeof(BookItem), "book_id"},

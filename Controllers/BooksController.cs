@@ -22,7 +22,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpGet("{book_id}")]
-        [IdFilterAsync<BookItem>]
+        [ExistanceFilterAsync<BookItem>]
         [Authorize]
         public ActionResult<BookItem> GetBook(long book_id){
             var book = _db.BookItems.Include("Reviews").First(b => b.Id == book_id);
@@ -43,8 +43,15 @@ namespace EasyBook.Controllers {
             return CreatedAtAction(nameof(AddBook), book_data);
         }
 
+        // [HttpPatch("{book_id}")]
+        // [Authorize(Policy = IdentityData.AdminUserPolicy)]
+        // public async Task<ActionResult> PublishBookItem(){
+
+        // }
+
+
         [HttpPut("{book_id}")]
-        [IdFilterAsync<BookItem>]
+        [ExistanceFilterAsync<BookItem>]
         [Authorize(Policy = IdentityData.AdminUserPolicy)]
         public async Task<ActionResult<BookItem>> PutBook(long book_id, BookItemDTO new_data){
             if(book_id != new_data.Id){
@@ -65,7 +72,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpDelete("{book_id}")]
-        [IdFilterAsync<BookItem>]
+        [ExistanceFilterAsync<BookItem>]
         [Authorize(Policy = IdentityData.AdminUserPolicy)]
         public async Task<ActionResult> DeleteBook(long book_id){
             var book_item = await _db.BookItems.FindAsync(book_id);
@@ -81,7 +88,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpPost("Review/{book_id}")]
-        [IdFilterAsync<BookItem>]
+        [ExistanceFilterAsync<BookItem>]
         [Authorize]
         public async Task<ActionResult> PostReview(long book_id, ReviewDTO review_data){
             if(review_data.BookItemId != book_id){
@@ -95,7 +102,7 @@ namespace EasyBook.Controllers {
         }
 
         [HttpDelete("Review/{review_id}")]
-        [IdFilterAsync<ReviewItem>, AuthorityFilterAsync<ReviewItem>]
+        [ExistanceFilterAsync<ReviewItem>, OwnershipFilterAsync<ReviewItem>]
         [Authorize]
         public async Task<ActionResult> DeleteReview(long review_id){
             var review_item = (await _db.Reviews.FindAsync(review_id))!;

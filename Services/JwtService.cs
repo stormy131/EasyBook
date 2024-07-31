@@ -22,7 +22,7 @@ public class AuthService{
 
         var tokenDescriptor = new SecurityTokenDescriptor{
             SigningCredentials = credentials,
-            Expires = DateTime.UtcNow.AddMinutes(1),
+            Expires = DateTime.UtcNow.AddMinutes(30),
             Subject = GenerateClaim(data)
         };
 

@@ -22,7 +22,10 @@ public class BookItemDTO{
             Name = b.Name,
             Author = b.Author,
             Genre = b.Genre,
-            Price = b.Price
+            Price = b.Price,
+
+            // DTO -> Model conversion is only needed while posting new item
+            // IsPublished = false
         };
     }
 
@@ -50,6 +53,7 @@ public class BookItem {
 
     public required int Price { get; set; }
     public string? Genre { get; set; }
+    // public bool IsPublished { get; set; }
 
     public virtual ICollection<ReviewItem> Reviews { get; set; }
 }

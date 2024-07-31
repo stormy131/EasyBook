@@ -15,10 +15,15 @@ namespace EasyBook.Controllers{
             _db = context;
         }
 
-        [HttpGet("{user_id}")]
-        [IdFilterAsync<User>]
-        public IQueryable<OrderDTO> GetUserOrders(long user_id){
-            return _db.Orders.Include("OrderedItems").Where(o => o.UserId == user_id).Select(o => (OrderDTO) o);
+        [HttpGet]
+        public IQueryable<OrderDTO> GetUserOrders(){
+            var issuer_id = HttpContext.User.Claims.FirstOrDefault(
+                c => c.Type == "id"
+            );
+
+            return _db.Orders.Include("OrderedItems")
+                .Where(o => o.UserId == Convert.ToInt32(issuer_id.Value))
+                .Select(o => (OrderDTO) o);
         }
 
         [HttpPost]
@@ -29,8 +34,8 @@ namespace EasyBook.Controllers{
             return CreatedAtAction(nameof(PostOrder), order_data);
         }
 
-        [HttpDelete("{user_id}/{order_id}")]
-        [IdFilterAsync<User>, AuthorityFilterAsync<Order>]
+        [HttpDelete("{order_id}")]
+        [OwnershipFilterAsync<Order>]
         public async Task<ActionResult> DeleteOrder(long order_id){
             var order = await _db.Orders.FindAsync(order_id);
 

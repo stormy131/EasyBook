@@ -37,9 +37,11 @@ namespace EasyBook.Controllers{
         }
 
         [HttpGet("{user_id}")]
-        [IdFilterAsync<User>]
+        [ExistanceFilterAsync<User>]
         [Authorize]
         public async Task<ActionResult<UserDTO>> GetUser(long user_id){
+            
+
             return (UserDTO)(await _db.Users.FindAsync(user_id))!;
         }
 
@@ -56,7 +58,7 @@ namespace EasyBook.Controllers{
         }
 
         [HttpDelete("{user_id}")]
-        [IdFilterAsync<User>]
+        [ExistanceFilterAsync<User>]
         [Authorize(Policy = IdentityData.AdminUserPolicy)]
         public async Task<ActionResult> DeleteUser(long user_id){
             var user = await _db.Users.FindAsync(user_id);
@@ -72,7 +74,7 @@ namespace EasyBook.Controllers{
         }
 
         [HttpPut("{user_id}")]
-        [IdFilterAsync<User>]
+        [ExistanceFilterAsync<User>]
         [Authorize]
         public async Task<ActionResult<UserDTO>> PutUser(long user_id, User new_data){
             if(new_data.Id != user_id){
