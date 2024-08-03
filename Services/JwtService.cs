@@ -13,6 +13,9 @@ public class AuthService{
             .Build();
 
     public string Create(UserDTO data){
+        // Generating JWT token for user authorization. Provided user data
+        // and secret key from appsettings will be encodined also.
+
         var handler = new JwtSecurityTokenHandler();
         var private_key = Encoding.UTF8.GetBytes(bearer_config["JwtBearer:PrivateKey"]!);
         var credentials = new SigningCredentials(
@@ -31,6 +34,7 @@ public class AuthService{
     }
 
     private static ClaimsIdentity GenerateClaim(UserDTO user){
+        // Creation of user-specific claim set (identity)
         var ci = new ClaimsIdentity();
 
         ci.AddClaim(new Claim("id", user.Id.ToString()));

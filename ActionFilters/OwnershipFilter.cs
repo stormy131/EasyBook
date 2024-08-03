@@ -4,10 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace EasyBook.Filters {
+    
+    // Helper interface to denote entities, that were created by user
     public interface ICreatedByUser {
         public long UserId { get; set; }
     }
 
+    // Custom filter for verifying user access to the target endpoint.
+    // Should be applied to the endpoints, that operate with specific entity instances.
     public class OwnershipFilterAsync<TEntity> : Attribute, IAsyncActionFilter where TEntity : class, ICreatedByUser {
         private readonly Dictionary<Type, string> route_parameter = new Dictionary<Type, string>{
             {typeof(Order), "order_id"},

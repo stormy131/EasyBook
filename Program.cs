@@ -22,9 +22,11 @@ builder.Services.AddDbContext<EasyBookContext>(options =>
 builder.Services.AddControllers().AddJsonOptions(opts =>
     opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-// Auth & Autorize
-builder.Services.AddTransient<AuthService>();
 
+// Auth & Autorize
+
+// JWT service
+builder.Services.AddTransient<AuthService>();
 builder.Services.AddAuthentication(options =>{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -40,12 +42,14 @@ builder.Services.AddAuthentication(options =>{
     };
 });
 
+// Authorization polcy for admin-only endpoints
 builder.Services.AddAuthorization(options =>{
     options.AddPolicy(IdentityData.AdminUserPolicy, p => {
         p.RequireClaim(IdentityData.AdminUserClaim, "True");
     });
 });
 
+// Swagger documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => {
     options.AddSecurityDefinition(
@@ -59,6 +63,7 @@ builder.Services.AddSwaggerGen(options => {
         }
     );
 
+    // Swagger built-in support for authorization
     options.AddSecurityRequirement(
         new OpenApiSecurityRequirement{
             {

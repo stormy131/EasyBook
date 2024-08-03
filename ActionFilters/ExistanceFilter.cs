@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EasyBook.Filters{
+
+    // Custonm filter to verify the existance of a instance woth provided ID.
+    // Should be applied to the endpoints, that operate with specific entity instances.
     public class ExistanceFilterAsync<TEntity> : Attribute, IAsyncActionFilter where TEntity : class {
         private readonly Dictionary<Type, string> route_paramter = new Dictionary<Type, string>{
             {typeof(User), "user_id"},
