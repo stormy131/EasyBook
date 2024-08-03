@@ -23,9 +23,6 @@ public class BookItemDTO{
             Author = b.Author,
             Genre = b.Genre,
             Price = b.Price,
-
-            // DTO -> Model conversion is only needed while posting new item
-            // IsPublished = false
         };
     }
 
@@ -53,7 +50,16 @@ public class BookItem {
 
     public required int Price { get; set; }
     public string? Genre { get; set; }
-    // public bool IsPublished { get; set; }
+    
+    public double Rating {
+        get {
+            if(Reviews is null || !Reviews.Any()){
+                return 0;
+            }
 
-    public virtual ICollection<ReviewItem> Reviews { get; set; }
+            return Reviews.Select(r => r.Rating).Average();
+        }
+    }
+
+    public virtual IEnumerable<ReviewItem> Reviews { get; set; }
 }

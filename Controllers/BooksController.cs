@@ -18,7 +18,7 @@ namespace EasyBook.Controllers {
         [HttpGet]
         [Authorize]
         public IQueryable<BookItemDTO> GetAllBooks(){
-            return _db.BookItems.Select(b => (BookItemDTO)b);
+            return _db.BookItems.Select(b => (BookItemDTO) b);
         }
 
         [HttpGet("{book_id}")]
@@ -26,29 +26,17 @@ namespace EasyBook.Controllers {
         [Authorize]
         public ActionResult<BookItem> GetBook(long book_id){
             var book = _db.BookItems.Include("Reviews").First(b => b.Id == book_id);
-
-            if (book is null){
-                return NotFound();
-            }
-
             return book;
         }
 
         [HttpPost]
-        [Authorize(Policy = IdentityData.AdminUserPolicy)]
+        [Authorize( Policy = IdentityData.AdminUserPolicy )]
         public async Task<ActionResult> AddBook(BookItemDTO book_data){
             _db.BookItems.Add(book_data);
             await _db.SaveChangesAsync();
 
             return CreatedAtAction(nameof(AddBook), book_data);
         }
-
-        // [HttpPatch("{book_id}")]
-        // [Authorize(Policy = IdentityData.AdminUserPolicy)]
-        // public async Task<ActionResult> PublishBookItem(){
-
-        // }
-
 
         [HttpPut("{book_id}")]
         [ExistanceFilterAsync<BookItem>]
@@ -58,7 +46,7 @@ namespace EasyBook.Controllers {
                 return BadRequest();
             }
 
-            _db.Entry(new_data).State = EntityState.Modified;
+            _db.Entry((BookItem) new_data).State = EntityState.Modified;
 
             try {
                 await _db.SaveChangesAsync(); 
@@ -91,11 +79,15 @@ namespace EasyBook.Controllers {
         [ExistanceFilterAsync<BookItem>]
         [Authorize]
         public async Task<ActionResult> PostReview(long book_id, ReviewDTO review_data){
-            if(review_data.BookItemId != book_id){
-                return BadRequest("Target book item IDs do not correspond to each other");
+            var issuer_id = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "id")!;
+            if(review_data.UserId != Convert.ToInt64(issuer_id.Value)){
+                return BadRequest("Mismatch in payload data");
             }
 
-            _db.Reviews.Add(review_data);
+            var review = (ReviewItem) review_data;
+            review.BookItemId = book_id;
+
+            _db.Reviews.Add(review);
             await _db.SaveChangesAsync();
 
             return CreatedAtAction(nameof(PostReview), review_data);           

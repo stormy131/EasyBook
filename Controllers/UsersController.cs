@@ -40,8 +40,6 @@ namespace EasyBook.Controllers{
         [ExistanceFilterAsync<User>]
         [Authorize]
         public async Task<ActionResult<UserDTO>> GetUser(long user_id){
-            
-
             return (UserDTO)(await _db.Users.FindAsync(user_id))!;
         }
 
@@ -59,8 +57,20 @@ namespace EasyBook.Controllers{
 
         [HttpDelete("{user_id}")]
         [ExistanceFilterAsync<User>]
-        [Authorize(Policy = IdentityData.AdminUserPolicy)]
+        [Authorize]
         public async Task<ActionResult> DeleteUser(long user_id){
+            var issuer_claims = HttpContext.User.Claims;
+            var issuer_id = issuer_claims.FirstOrDefault(c => {
+                return c.Type == "id";
+            })!.Value;
+            var is_admin = issuer_claims.FirstOrDefault(c => {
+                return c.Type == IdentityData.AdminUserClaim;
+            })!.Value;
+
+            if(Convert.ToInt64(issuer_id) != user_id && !Convert.ToBoolean(is_admin)){
+                return Forbid("Insufficient rights for the action");
+            }
+
             var user = await _db.Users.FindAsync(user_id);
 
             if(user is null){
@@ -77,8 +87,13 @@ namespace EasyBook.Controllers{
         [ExistanceFilterAsync<User>]
         [Authorize]
         public async Task<ActionResult<UserDTO>> PutUser(long user_id, User new_data){
-            if(new_data.Id != user_id){
-                return BadRequest();
+            var issuer_claims = HttpContext.User.Claims;
+            var issuer_id = issuer_claims.FirstOrDefault(c => {
+                return c.Type == "id";
+            })!.Value;
+
+            if(new_data.Id != user_id || new_data.Id != Convert.ToInt64(issuer_id)){
+                return Forbid("Insufficient rights for the action");
             }
 
             var cahnges_email = _db.Users.AsNoTracking()
@@ -89,6 +104,24 @@ namespace EasyBook.Controllers{
             
             _db.Entry(new_data).State = EntityState.Modified;
 
+            try{
+                await _db.SaveChangesAsync();
+            } catch (DbUpdateConcurrencyException){
+                if(!_db.Users.Any(u => u.Id == user_id)){
+                    return NotFound();
+                } else throw;
+            }
+
+            return NoContent();
+        }
+
+        [HttpPatch("{user_id}")]
+        [ExistanceFilterAsync<User>]
+        [Authorize(Policy = IdentityData.AdminUserPolicy)]
+        public async Task<ActionResult> PromoteUser(long user_id){
+            var account = (await _db.Users.FindAsync(user_id))!;
+            account.IsAdmin = true;
+            
             try{
                 await _db.SaveChangesAsync();
             } catch (DbUpdateConcurrencyException){

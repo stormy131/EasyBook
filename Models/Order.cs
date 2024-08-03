@@ -3,17 +3,26 @@ using EasyBook.Filters;
 
 namespace EasyBook.Models;
 
+public enum OrderStatus {
+    Processing,
+    Delievery,
+    Delievered,
+    Canceled
+}
+
 public class OrderDTO{
     public long Id { get; set; }
     public long UserId { get; set; }
+    public OrderStatus? Status { get; set; }
 
-    public ICollection<OrderItemDTO> OrderedItems { get; set; }
+    public IEnumerable<OrderItemDTO> OrderedItems { get; set; }
 
     public static explicit operator OrderDTO(Order order){
         return new OrderDTO{
             Id = order.Id,
             UserId = order.UserId,
-            OrderedItems = order.OrderedItems.Select(x => (OrderItemDTO)x).ToList()
+            Status = order.Status,
+            OrderedItems = order.OrderedItems.Select(x => (OrderItemDTO)x)
         };
     }
 
@@ -21,6 +30,9 @@ public class OrderDTO{
         return new Order{
             Id = order_dto.Id,
             UserId = order_dto.UserId,
+
+            // Gets prefilled with Processing, during posting
+            Status = (OrderStatus) order_dto.Status!,
             OrderedItems = order_dto.OrderedItems.Select(x => (OrderItem)x).ToList()
         };
     }
@@ -31,6 +43,8 @@ public class Order : ICreatedByUser {
     public long UserId { get; set; }
     [Required]
     public User User { get; set; }
+
+    public OrderStatus Status { get; set; }
 
     [Required]
     public IEnumerable<OrderItem> OrderedItems { get; set; }

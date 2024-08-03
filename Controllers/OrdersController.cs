@@ -19,7 +19,7 @@ namespace EasyBook.Controllers{
         public IQueryable<OrderDTO> GetUserOrders(){
             var issuer_id = HttpContext.User.Claims.FirstOrDefault(
                 c => c.Type == "id"
-            );
+            )!;
 
             return _db.Orders.Include("OrderedItems")
                 .Where(o => o.UserId == Convert.ToInt32(issuer_id.Value))
@@ -28,6 +28,18 @@ namespace EasyBook.Controllers{
 
         [HttpPost]
         public async Task<ActionResult<OrderDTO>> PostOrder(OrderDTO order_data){
+            var issuer_id = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "id")!;
+            if(Convert.ToInt64(issuer_id.Value) != order_data.UserId){
+                return BadRequest("Mismatch in payload data (user ID)");
+            }
+
+            foreach(OrderItemDTO item in order_data.OrderedItems){
+                if ((await _db.BookItems.FindAsync(item.ItemId)) == null){
+                    return BadRequest("Mismatch in payload data (ordered item ID)");
+                }
+            }
+
+            order_data.Status = OrderStatus.Processing;
             _db.Orders.Add(order_data);
             await _db.SaveChangesAsync();
 
@@ -35,7 +47,7 @@ namespace EasyBook.Controllers{
         }
 
         [HttpDelete("{order_id}")]
-        [OwnershipFilterAsync<Order>]
+        [ExistanceFilterAsync<Order>, OwnershipFilterAsync<Order>]
         public async Task<ActionResult> DeleteOrder(long order_id){
             var order = await _db.Orders.FindAsync(order_id);
 
@@ -48,6 +60,5 @@ namespace EasyBook.Controllers{
 
             return NoContent();
         }
-
     }
 }

@@ -8,7 +8,8 @@ namespace EasyBook.Filters{
         private readonly Dictionary<Type, string> route_paramter = new Dictionary<Type, string>{
             {typeof(User), "user_id"},
             {typeof(BookItem), "book_id"},
-            {typeof(ReviewItem), "review_id"}
+            {typeof(ReviewItem), "review_id"},
+            {typeof(Order), "order_id"}
         };
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

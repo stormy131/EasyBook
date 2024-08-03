@@ -10,7 +10,6 @@ public class ReviewDTO{
     public string? Text { get; set; }
 
     public long UserId { get; set; }
-    public long BookItemId { get; set; }
 
     [Range(1, 5)]
     public required int Rating { get; set; }   
@@ -20,7 +19,6 @@ public class ReviewDTO{
             Id = r.Id,
             Text = r.Text,
             UserId = r.UserId,
-            BookItemId = r.BookItemId,
             Rating = r.Rating
         };
     }
@@ -30,7 +28,6 @@ public class ReviewDTO{
             Rating = r.Rating,
             Text = r.Text,
             UserId = r.UserId,
-            BookItemId = r.BookItemId,
             Id = r.Id
         };
     }
@@ -47,7 +44,6 @@ public class ReviewItem : ICreatedByUser{
     public virtual User User { get; set; }
 
     public long BookItemId { get; set; }
-    [Required]
     public virtual BookItem BookItem { get; set; }
 
     [Range(1, 5)]
