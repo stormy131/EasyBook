@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using EasyBook.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel;
 
 namespace EasyBook.Controllers {
     [Route("api/[controller]")]
@@ -73,6 +75,36 @@ namespace EasyBook.Controllers {
             await _db.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("search")]
+        [Authorize]
+        public IQueryable<BookItemDTO> IndexBooks(
+            string? search_string,
+            string? genre,
+            string? author
+        ){
+            var books = _db.BookItems.Where(b => true);
+
+            if(!search_string.IsNullOrEmpty()){
+                books = books.Where(
+                    b => b.Name.ToLower().Contains(search_string!.ToLower())
+                );
+            }
+
+            if(!genre.IsNullOrEmpty()){
+                books = books.Where(
+                    b => b.Genre != null && b.Genre.ToLower() == genre!.ToLower()
+                );
+            }
+
+            if(!author.IsNullOrEmpty()){
+                books = books.Where(
+                    b => b.Author.ToLower().Contains(author!.ToLower())
+                );
+            }
+
+            return books.Select(b => (BookItemDTO) b);
         }
 
         [HttpPost("Review/{book_id}")]
